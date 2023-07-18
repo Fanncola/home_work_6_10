@@ -8,8 +8,12 @@ def test_filling_form():
                      gender='Male',
                      phone='1234567890',
                      hobbies='Music',
+                     subjects=['Computer Science', 'Maths'],
                      current_address='Asia/Kolkata',
-                     birth_date={'day': '24', 'month': 'December', 'year': '1988'}
+                     picture='image.png',
+                     birth_date={'day': '24', 'month': 'December', 'year': '1988'},
+                     state='NCR',
+                     city='Delhi'
                      )
 
     registration_page = RegistrationPage()

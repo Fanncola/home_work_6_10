@@ -8,6 +8,11 @@ class User:
     phone: str
     email: str
     gender: str
+    subjects: list
     birth_date: object
     hobbies: str
+    picture: str
+    state: str
+    city: str
     current_address: str
+

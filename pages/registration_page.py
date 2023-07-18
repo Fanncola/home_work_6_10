@@ -1,7 +1,10 @@
+import os
 from selene import browser, have, command
 from dataclasses import dataclass
 
 from data.users import User
+
+FILE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../tests/resources'))
 
 
 @dataclass()
@@ -13,7 +16,10 @@ class RegistrationPage(User):
         self.userGender = browser.all('[name=gender]')
         self.phoneNumber = browser.element('#userNumber')
         self.currentAddress = browser.element('#currentAddress')
-        self.state = browser.element('#state')
+        self.userSubjects = browser.element('#subjectsInput')
+        self.userState = browser.element('#state')
+        self.userCity = browser.element('#city')
+        self.userPicture = browser.element('#uploadPicture')
         self.submitForm = browser.element('#submit')
         self.resultTable = browser.all('.modal-content td')
 
@@ -29,10 +35,19 @@ class RegistrationPage(User):
         self.phoneNumber.type(f'{user.phone}')
         self.fill_birthday(user.birth_date['day'], user.birth_date['month'], user.birth_date['year'])
         browser.element(f'//label[contains(text(), "{user.hobbies}")]').click()
+
+        for _ in user.subjects:
+            self.userSubjects.type(_).press_enter()
+
+        self.userPicture.send_keys(os.path.join(FILE_DIR, f'{user.picture}'))
         self.currentAddress.type(f'{user.current_address}')
         browser.element('#stateCity-wrapper') \
             .perform(command.js.scroll_into_view)
-        self.state.click()
+        self.userState.click()
+        browser.element(f'//*[.="{user.state}"]').click()
+        self.userCity.click()
+        browser.element(f'//*[.="{user.city}"]').click()
+        self.userState.click()
         self.submitForm.click().press_enter()
 
     @staticmethod
@@ -52,11 +67,11 @@ class RegistrationPage(User):
             ('Gender', user.gender),
             ('Mobile', user.phone),
             ('Date of Birth', f'{user.birth_date["day"]} {user.birth_date["month"]},{user.birth_date["year"]}'),
-            ('Subjects', ''),
+            ('Subjects', ', '.join(user.subjects)),
             ('Hobbies', user.hobbies),
-            ('Picture', ''),
+            ('Picture', user.picture),
             ('Address', user.current_address),
-            ('State and City', '')))
+            ('State and City', f'{user.state} {user.city}')))
 
     @staticmethod
     def close_submit_form():
